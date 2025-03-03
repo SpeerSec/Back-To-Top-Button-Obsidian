@@ -222,7 +222,6 @@ class BackToTopSettingsTab extends PluginSettingTab {
                     this.plugin.settings.enableHeaderMenu = value;
 
                     if (!value) {
-                        // Store previous state and disable individual header toggles
                         this.plugin.settings.previousShowH1 = this.plugin.settings.showH1;
                         this.plugin.settings.previousShowH2 = this.plugin.settings.showH2;
                         this.plugin.settings.previousShowH3 = this.plugin.settings.showH3;
@@ -231,7 +230,6 @@ class BackToTopSettingsTab extends PluginSettingTab {
                         this.plugin.settings.showH2 = false;
                         this.plugin.settings.showH3 = false;
                     } else {
-                        // Restore previous state (if available), otherwise default all to true
                         this.plugin.settings.showH1 = this.plugin.settings.previousShowH1 ?? true;
                         this.plugin.settings.showH2 = this.plugin.settings.previousShowH2 ?? true;
                         this.plugin.settings.showH3 = this.plugin.settings.previousShowH3 ?? true;
@@ -240,11 +238,9 @@ class BackToTopSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                     this.plugin.updateMenu();
 
-                    // ⚠️ Important — Rebuild the settings UI so the toggles reflect new state
                     this.display();
-                }));
+                })); // this was annoying...
 
-        // Individual H1-H3 toggles (only shown if the menu is enabled)
         if (this.plugin.settings.enableHeaderMenu) {
             ['H1', 'H2', 'H3'].forEach(level => {
                 new Setting(containerEl)
@@ -255,13 +251,11 @@ class BackToTopSettingsTab extends PluginSettingTab {
                         .onChange(async (value) => {
                             this.plugin.settings[`show${level}`] = value;
 
-                            // Enabling any tier should also enable the menu
                             if (value) this.plugin.settings.enableHeaderMenu = true;
 
                             await this.plugin.saveSettings();
                             this.plugin.updateMenu();
 
-                            // Rebuild to make sure the main toggle is properly checked if needed
                             this.display();
                         }));
             });
